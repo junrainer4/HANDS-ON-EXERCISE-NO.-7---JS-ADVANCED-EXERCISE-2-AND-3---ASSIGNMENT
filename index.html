@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Javascript 2</title>
 </head>
 <body>
@@ -9,148 +11,52 @@
 <h2>Javascript Web Output #2</h2>
 
 <table>
-  <tr><td>First Name:</td><td><input type="text" id="firstName" /></td></tr>
-  <tr><td>Middle Name:</td><td><input type="text" id="middleName" /></td></tr>
-  <tr><td>Last Name:</td><td><input type="text" id="lastName" /></td></tr>
-  <tr><td>Age:</td><td><input type="text" id="age" /></td></tr>
+  <tr>
+    <td>First Name:</td>
+    <td><input type="text" id="firstName"></td>
+  </tr>
+  <tr>
+    <td>Middle Name:</td>
+    <td><input type="text" id="middleName"></td>
+  </tr>
+  <tr>
+    <td>Last Name:</td>
+    <td><input type="text" id="lastName"></td>
+  </tr>
+  <tr>
+    <td>Age:</td>
+    <td><input type="text" id="age"></td>
+  </tr>
+  <tr>
+    <td colspan="2">
+      <button id="insertBtn">Insert</button>
+      <button id="clearBtn">Clear</button>
+    </td>
+  </tr>
 </table>
 
 <br>
-<button id="insertBtn" onclick="insertRecord()">Insert</button>
-<button onclick="clearForm()">Clear</button>
 
-<br><br>
-
-<fieldset style="display:inline-block; min-width:500px;">
+<fieldset>
   <legend>Records</legend>
   <div id="recordsContainer"></div>
 </fieldset>
 
 <br>
-<button onclick="clearRecords()">Clear Records</button>
+
+<button id="clearRecordsBtn">Clear Records</button>
 Sort by:
-<select id="sortField" onchange="sortRecords()">
+<select id="sortField">
   <option value="">Please select</option>
   <option value="firstName">First Name</option>
   <option value="lastName">Last Name</option>
 </select>
-<select id="sortOrder" onchange="sortRecords()">
+<select id="sortOrder">
   <option value="asc">A-Z</option>
   <option value="desc">Z-A</option>
 </select>
-<button onclick="saveToLocal()">Save to Local Storage</button>
+<button id="saveBtn">Save to Local Storage</button>
 
-<script>
-  let records = [];
-  let editingIndex = -1;
-
-  window.onload = function () {
-    const saved = localStorage.getItem('js2_records');
-    if (saved) {
-      try { records = JSON.parse(saved); } catch (e) { records = []; }
-    }
-    renderTable();
-  };
-
-  function insertRecord() {
-    const r = {
-      firstName: document.getElementById('firstName').value.trim(),
-      middleName: document.getElementById('middleName').value.trim(),
-      lastName: document.getElementById('lastName').value.trim(),
-      age: document.getElementById('age').value.trim()
-    };
-    if (!r.firstName || !r.lastName || !r.age) { alert('Please fill in First Name, Last Name, and Age.'); return; }
-
-    if (editingIndex >= 0) {
-      records[editingIndex] = r;
-      editingIndex = -1;
-      document.getElementById('insertBtn').textContent = 'Insert';
-    } else {
-      records.push(r);
-    }
-    clearForm();
-  }
-
-  function clearForm() {
-    ['firstName','middleName','lastName','age'].forEach(id => document.getElementById(id).value = '');
-    editingIndex = -1;
-    document.getElementById('insertBtn').textContent = 'Insert';
-    renderTable();
-  }
-
-  function deleteRecord(i) {
-    records.splice(i, 1);
-    renderTable();
-  }
-
-  function editRecord(i) {
-    editingIndex = i;
-    const r = records[i];
-    document.getElementById('firstName').value = r.firstName;
-    document.getElementById('middleName').value = r.middleName;
-    document.getElementById('lastName').value = r.lastName;
-    document.getElementById('age').value = r.age;
-    document.getElementById('insertBtn').textContent = 'Update';
-  }
-
-  function clearRecords() {
-    records = [];
-    editingIndex = -1;
-    localStorage.removeItem('js2_records');
-    clearForm();
-  }
-
-  function saveToLocal() {
-    localStorage.setItem('js2_records', JSON.stringify(records));
-    alert('Data saved to local storage!');
-  }
-
-  function sortRecords() {
-    const field = document.getElementById('sortField').value;
-    const order = document.getElementById('sortOrder').value;
-    if (!field) return;
-    records.sort((a, b) => {
-      let va = field === 'age' ? Number(a[field]) : a[field].toLowerCase();
-      let vb = field === 'age' ? Number(b[field]) : b[field].toLowerCase();
-      if (va < vb) return order === 'asc' ? -1 : 1;
-      if (va > vb) return order === 'asc' ? 1 : -1;
-      return 0;
-    });
-    renderTable();
-  }
-
-  function renderTable() {
-    const container = document.getElementById('recordsContainer');
-    if (records.length === 0) {
-      container.innerHTML = '<span style="color:red;">No Records...</span>';
-      return;
-    }
-    container.innerHTML = `
-      <table border="1" cellpadding="5" cellspacing="0">
-        <thead>
-          <tr>
-            <th>First Name</th>
-            <th>Middle Name</th>
-            <th>Last Name</th>
-            <th>Age</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${records.map((r, i) => `
-            <tr>
-              <td>${r.firstName}</td>
-              <td>${r.middleName}</td>
-              <td>${r.lastName}</td>
-              <td>${r.age}</td>
-              <td>
-                <button onclick="deleteRecord(${i})">Delete</button>
-                <button onclick="editRecord(${i})">Edit</button>
-              </td>
-            </tr>`).join('')}
-        </tbody>
-      </table>`;
-  }
-</script>
+<script src="script.js"></script>
 </body>
 </html>
